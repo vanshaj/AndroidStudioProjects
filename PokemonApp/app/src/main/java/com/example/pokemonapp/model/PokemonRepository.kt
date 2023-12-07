@@ -1,12 +1,19 @@
 package com.example.pokemonapp.model
 
+import com.example.pokemonapp.api.RetrofitInstance
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+
 class PokemonRepository {
 
-    fun getAll(): List<Pokemon> {
-        val pokemons: List<Pokemon>  = listOf(
-            Pokemon("bulbasaur", "https://abc"),
-            Pokemon("pikachu", "https://abc")
-        )
+    suspend fun getAll(): AllPokemonResponse? {
+        var pokemons: AllPokemonResponse?  = null
+        val result = RetrofitInstance.api.getAllPokemon()
+        if (result.code() == 200) {
+            pokemons = result.body()
+        }
         return pokemons
     }
 

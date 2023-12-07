@@ -6,9 +6,10 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pokemonapp.model.AllPokemonResponse
 import com.example.pokemonapp.model.Pokemon
 
-class RecyclerViewAdapter(private val items: List<Pokemon>) : RecyclerView.Adapter<RecyclerViewAdapter.CustomHolder>(){
+class RecyclerViewAdapter(var items: AllPokemonResponse?) : RecyclerView.Adapter<RecyclerViewAdapter.CustomHolder>(){
 
     var onItemClick: ((Pokemon) -> Unit)? = null
     class CustomHolder(view: View): RecyclerView.ViewHolder(view) {
@@ -27,15 +28,17 @@ class RecyclerViewAdapter(private val items: List<Pokemon>) : RecyclerView.Adapt
     }
 
     override fun getItemCount(): Int {
-        return items.size
+        return items?.results?.size ?: 0
     }
 
     override fun onBindViewHolder(holder: CustomHolder, position: Int) {
-        val pokemon = items[position]
-        holder.name.text = pokemon.name
-        holder.url.text = pokemon.url
+        val pokemon = items?.results?.get(position)
+        holder.name.text = pokemon?.name
+        holder.url.text = pokemon?.url
         holder.itemView.setOnClickListener{
-            onItemClick?.invoke(pokemon)
+            if (pokemon != null) {
+                onItemClick?.invoke(pokemon)
+            }
         }
     }
 }
