@@ -31,6 +31,15 @@ class RecyclerViewAdapter(var items: AllPokemonResponse?, var onItemClick: ((Pok
         return items?.results?.size ?: 0
     }
 
+    fun updateList(newItems: AllPokemonResponse?) {
+        this.items?.next = newItems?.next.toString()
+        this.items?.previous = newItems?.previous.toString()
+        val newItemsIterator = newItems?.results?.iterator()
+        while(newItemsIterator?.hasNext() == true) {
+            newItemsIterator?.next()?.let { this.items?.results?.add(it) }
+        }
+    }
+
     override fun onBindViewHolder(holder: CustomHolder, position: Int) {
         val pokemon = items?.results?.get(position)
         holder.name.text = pokemon?.name

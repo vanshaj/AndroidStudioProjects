@@ -12,11 +12,11 @@ import kotlinx.coroutines.launch
 
 class PokemonRepository {
 
-    fun getAll(): LiveData<AllPokemonResponse?> {
+    fun getAll(offset: Int = 0, limit: Int = 20): LiveData<AllPokemonResponse?> {
         var pokemons: AllPokemonResponse?  = null
         val retrofitInstance: PokemonApi = RetrofitInstance.getRetrofitInstance().create(PokemonApi::class.java)
         return liveData {
-            val pokemonResponse : AllPokemonResponse? = retrofitInstance.getAllPokemon().body()
+            val pokemonResponse : AllPokemonResponse? = retrofitInstance.getAllPokemon(offset, limit).body()
             Log.i("mytag", pokemonResponse?.results?.get(0)?.name.toString())
             emit(pokemonResponse)
         }

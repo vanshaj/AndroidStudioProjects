@@ -6,8 +6,8 @@ data class AllPokemonResponse(
     @SerializedName("count")
     val count: Int,
     @SerializedName("next")
-    val next: String,
+    var next: String,
     @SerializedName("previous")
-    val previous: String,
+    var previous: String,
     @SerializedName("results")
-    val results: List<Pokemon>)
+    var results: ArrayList<Pokemon>)
