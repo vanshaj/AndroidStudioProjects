@@ -14,7 +14,7 @@ class PokemonFactActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pokemon_fact)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_pokemon_fact )
-        val pokemon: Pokemon = intent.getSerializableExtra("pokemon") as Pokemon
-        binding.pokemonNameText.text = pokemon.name
+        val name: String = intent.getStringExtra("name").toString()
+        binding.pokemonNameText.text = name
     }
 }

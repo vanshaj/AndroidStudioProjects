@@ -1,5 +1,9 @@
 package com.example.pokemonapp.model
 
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
+import com.example.pokemonapp.api.PokemonApi
 import com.example.pokemonapp.api.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -8,16 +12,19 @@ import kotlinx.coroutines.launch
 
 class PokemonRepository {
 
-    suspend fun getAll(): AllPokemonResponse? {
+    fun getAll(): LiveData<AllPokemonResponse?> {
         var pokemons: AllPokemonResponse?  = null
-        val result = RetrofitInstance.api.getAllPokemon()
-        if (result.code() == 200) {
-            pokemons = result.body()
+        val retrofitInstance: PokemonApi = RetrofitInstance.getRetrofitInstance().create(PokemonApi::class.java)
+        return liveData {
+            val pokemonResponse : AllPokemonResponse? = retrofitInstance.getAllPokemon().body()
+            Log.i("mytag", pokemonResponse?.results?.get(0)?.name.toString())
+            emit(pokemonResponse)
         }
-        return pokemons
     }
 
-    fun getPokemon(id: Int): Pokemon {
-        return Pokemon("pikachu", "https://abc")
+    fun getPokemon(id: Int): LiveData<Pokemon> {
+        return liveData {
+            emit(Pokemon("pikachu", "https://abc"))
+        }
     }
 }

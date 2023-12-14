@@ -9,9 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pokemonapp.model.AllPokemonResponse
 import com.example.pokemonapp.model.Pokemon
 
-class RecyclerViewAdapter(var items: AllPokemonResponse?) : RecyclerView.Adapter<RecyclerViewAdapter.CustomHolder>(){
+class RecyclerViewAdapter(var items: AllPokemonResponse?, var onItemClick: ((Pokemon) -> Unit)) : RecyclerView.Adapter<RecyclerViewAdapter.CustomHolder>(){
 
-    var onItemClick: ((Pokemon) -> Unit)? = null
+    // var onItemClick: ((Pokemon) -> Unit)? = null
     class CustomHolder(view: View): RecyclerView.ViewHolder(view) {
         val name: TextView
         val url: TextView
