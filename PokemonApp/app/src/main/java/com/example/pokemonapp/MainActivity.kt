@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +14,8 @@ import com.example.pokemonapp.databinding.ActivityMainBinding
 import com.example.pokemonapp.model.AllPokemonResponse
 import com.example.pokemonapp.model.Pokemon
 import com.example.pokemonapp.model.PokemonRepository
+import com.example.pokemonapp.viewmodel.PokemonViewModel
+import com.example.pokemonapp.viewmodel.PokemonViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,19 +32,22 @@ class MainActivity : AppCompatActivity() {
         binding.pokemonListView.layoutManager = LinearLayoutManager(this)
         var pokemonRepo = PokemonRepository()
         // Get all data as live data
-        var pokemonLiveData: LiveData<AllPokemonResponse?> = pokemonRepo.getAll()
         // Create recycler view adapter from that live data
         // Observer the live data and assign it recycler view adapter
+        val pokemonViewModelFactory : PokemonViewModelFactory = PokemonViewModelFactory(pokemonRepo)
+        val pokemonViewModel = ViewModelProvider(this, pokemonViewModelFactory).get(PokemonViewModel::class.java)
+        var pokemonLiveData: LiveData<AllPokemonResponse?> = pokemonViewModel.getAll(0, 20)
 
         pokemonLiveData.observe(
             this, Observer {
-                recyclerViewAdapter = RecyclerViewAdapter(it, fun(p: Pokemon) {
+                recyclerViewAdapter = RecyclerViewAdapter(it, fun(p: Pokemon): Unit {
                     val intent: Intent = Intent(this, PokemonFactActivity::class.java)
                     intent.putExtra("name", p.name)
                     startActivity(intent)
                 })
                 binding.pokemonListView.adapter = recyclerViewAdapter
             })
+
         // Add on scroll if all items are being read then fetch new items
         binding.pokemonListView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -53,7 +59,7 @@ class MainActivity : AppCompatActivity() {
                     val matchResult = offsetRegex.find(pokemonLiveData.value?.next.toString())
                     val offsetValue : Int? = matchResult?.groupValues?.get(1)?.toInt()
                     if (offsetValue != null) {
-                        pokemonLiveData = pokemonRepo.getAll(offsetValue)
+                        pokemonLiveData = pokemonViewModel.getAll(offsetValue, 20)
                         // as the live data is being returned observer when the data will be available , once it is then perform task
                         pokemonLiveData.observe(this@MainActivity, Observer{
                             // when the pokemon live data is going to be udpated then
